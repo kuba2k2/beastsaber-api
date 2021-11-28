@@ -1,0 +1,51 @@
+{
+  "name": "beastsaber-api",
+  "version": "0.1.0",
+  "description": "BeastSaber scrapping API wrapper",
+  "main": "./lib/BeastSaber.js",
+  "types": "./lib/BeastSaber.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format-check": "prettier --check \"src/**/*.ts\"",
+    "lint": "tslint -p tsconfig.json",
+    "test": "jest --config jestconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuba2k2/beastsaber-api.git"
+  },
+  "author": "kuba2k2",
+  "keywords": [
+    "beastsaber",
+    "bsaber",
+    "bsaber.com",
+    "beatsaber"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kuba2k2/beastsaber-api/issues"
+  },
+  "homepage": "https://github.com/kuba2k2/beastsaber-api",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "node-html-parser": "^5.1.0",
+    "tslib": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "jest": "^27.3.1",
+    "prettier": "^2.5.0",
+    "ts-jest": "^27.0.7",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.5.2"
+  },
+  "files": [
+    "lib/**/*"
+  ]
+}
