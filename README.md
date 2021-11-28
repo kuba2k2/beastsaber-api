@@ -33,4 +33,22 @@ const maps = await api.getUploadedBy("smokeybacon")
 const maps = await api.getBookmarkedBy("nitronikexe")
 const maps = await api.getMostReviewed(/*page*/ 3)
 const maps = await api.getTopUserReviewsAll()
+
+// advanced: set a custom request handler
+// may be needed to use login operations in a browser, where a standard CORS proxy does not forward cookies
+api.setRequestHandler({
+    async get(endpoint: string) {
+        return {
+            headers: { /* ... */ },
+            body: "...",
+        }
+    },
+
+    async post(endpoint: string, params: Record<string, string>) {
+        return {
+            headers: { /* ... */ },
+            body: "...",
+        }
+    },
+})
 ```

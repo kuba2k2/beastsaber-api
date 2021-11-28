@@ -1,13 +1,15 @@
-import axios from "axios"
 import parse from "node-html-parser"
-import { BeastSaberEndpoints } from "../BeastSaberEndpoints"
 import { User } from "../models/User"
+import { RequestHandler } from "../RequestHandler"
 import { MapListResponse } from "../response/MapListResponse"
 import { parseMapElements } from "./html-map-parser"
 
-export async function parseMapList(endpoint: string): Promise<MapListResponse> {
-	const response = await axios.get(BeastSaberEndpoints.BaseUrl + endpoint)
-	const html = response.data as string
+export async function parseMapList(
+	handler: RequestHandler,
+	endpoint: string
+): Promise<MapListResponse> {
+	const response = await handler.get(endpoint)
+	const root = parse(response.body)
 
 	const result: MapListResponse = {
 		maps: [],
@@ -16,7 +18,6 @@ export async function parseMapList(endpoint: string): Promise<MapListResponse> {
 		},
 	}
 
-	const root = parse(html)
 	root.querySelectorAll("article.type-post").forEach((article) => {
 		const postGallery = article.querySelector(".post-gallery")
 		const galleryLink = postGallery?.querySelector("a[rel=bookmark]")

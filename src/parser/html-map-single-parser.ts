@@ -1,15 +1,15 @@
-import axios from "axios"
 import parse from "node-html-parser"
-import { BeastSaberEndpoints } from "../BeastSaberEndpoints"
 import MapNotFoundError from "../errors/MapNotFoundError"
 import { Map } from "../models/Map"
+import { RequestHandler } from "../RequestHandler"
 import { parseMapElements } from "./html-map-parser"
 
-export async function parseMapSingle(endpoint: string): Promise<Map | null> {
-	const response = await axios.get(BeastSaberEndpoints.BaseUrl + endpoint)
-	const html = response.data as string
-
-	const root = parse(html)
+export async function parseMapSingle(
+	handler: RequestHandler,
+	endpoint: string
+): Promise<Map | null> {
+	const response = await handler.get(endpoint)
+	const root = parse(response.body)
 
 	const title = root
 		.querySelector("meta[property=og:title]")
