@@ -11,7 +11,12 @@ import { MapListResponse } from "./response/MapListResponse"
 
 class BeastSaber {
 	handler: RequestHandler
+	userAgent: string =
+		"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0"
 
+	/**
+	 * @param cookieStore a store for a CookieJar to use with the default request handler
+	 */
 	constructor(cookieStore?: Store) {
 		this.handler = new AxiosRequestHandler(cookieStore)
 	}
@@ -28,6 +33,18 @@ class BeastSaber {
 	 */
 	public setRequestHandler(handler: RequestHandler) {
 		this.handler = handler
+	}
+
+	private getHeaders(): Record<string, string> {
+		return {
+			Accept: "*/*",
+			"Accept-Language": "en-US",
+			Referer: "https://bsaber.com/",
+			Origin: "https://bsaber.com/",
+			DNT: "1",
+			Pragma: "no-cache",
+			"Cache-Control": "no-cache",
+		}
 	}
 
 	/**
@@ -53,13 +70,73 @@ class BeastSaber {
 		})
 		this.handler.cookieJar.setCookie(cookie, BeastSaberEndpoints.BaseUrl)
 
-		const response = await this.handler.post({ endpoint, params })
+		const response = await this.handler.post({
+			endpoint,
+			params,
+			headers: this.getHeaders(),
+		})
 		if (response.status !== 302) {
 			throw new LoginFailedError(response.body)
 		}
 		return await this.handler.cookieJar.getCookies(
 			BeastSaberEndpoints.BaseUrl
 		)
+	}
+
+	/**
+	 * Check if the user is logged in (based on cookies expiration).
+	 */
+	public async isLoggedIn(endpoint?: string): Promise<boolean> {
+		const url = endpoint
+			? BeastSaberEndpoints.BaseUrl + endpoint
+			: BeastSaberEndpoints.BaseUrl
+		const cookies = await this.handler.cookieJar.getCookies(url)
+		return cookies.some(
+			(cookie) =>
+				cookie.TTL() > 0 && cookie.key.includes("wordpress_logged_in")
+		)
+	}
+
+	/**
+	 * Try to bookmark a map.
+	 * @param mapId bsaber.com post ID
+	 * @returns true if succeeded, false if failed (not logged in, etc.)
+	 */
+	public async bookmarkAdd(mapId: number): Promise<boolean> {
+		const endpoint = BeastSaberEndpoints.AdminAjax()
+		if (!this.isLoggedIn(endpoint)) return false
+		const params = {
+			action: "bsaber_bookmark_post",
+			type: "add_bookmark",
+			post_id: String(mapId),
+		}
+		const response = await this.handler.post({
+			endpoint,
+			params,
+			headers: this.getHeaders(),
+		})
+		return response.body.length === 0
+	}
+
+	/**
+	 * Try to un-bookmark a map.
+	 * @param mapId bsaber.com post ID
+	 * @returns true if succeeded, false if failed (not logged in, etc.)
+	 */
+	public async bookmarkRemove(mapId: number): Promise<boolean> {
+		const endpoint = BeastSaberEndpoints.AdminAjax()
+		if (!this.isLoggedIn(endpoint)) return false
+		const params = {
+			action: "bsaber_bookmark_post",
+			type: "remove_bookmark",
+			post_id: String(mapId),
+		}
+		const response = await this.handler.post({
+			endpoint,
+			params,
+			headers: this.getHeaders(),
+		})
+		return response.body.length === 0
 	}
 
 	/**

@@ -34,6 +34,9 @@ const maps = await api.getBookmarkedBy("nitronikexe")
 const maps = await api.getMostReviewed(/*page*/ 3)
 const maps = await api.getTopUserReviewsAll()
 
+// bookmark a map
+await api.bookmarkAdd(map.id)
+
 // advanced: set a custom request handler
 // may be needed to use login operations in a browser, where a standard CORS proxy does not forward cookies
 // see the built-in AxiosRequestHandler for an implementation example

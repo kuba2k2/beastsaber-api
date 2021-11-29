@@ -5,6 +5,7 @@ export const BeastSaberEndpoints = {
 	BaseUrl: "https://bsaber.com",
 
 	Login: () => `/wp-login.php`,
+	AdminAjax: () => `/wp-admin/admin-ajax.php`,
 
 	MapByKey: (key: string) => `/songs/${key}/`,
 	MapById: (id: number) => `/?p=${id}`,
