@@ -1,6 +1,6 @@
 export default class MapNotFoundError extends Error {
-	constructor(url: string) {
-		super(`Map not found at ${url}`)
+	constructor(idOrKey: any) {
+		super(`Map with ID/key ${idOrKey} not found`)
 		this.name = "MapNotFoundError"
 	}
 }

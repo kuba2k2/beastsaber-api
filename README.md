@@ -36,19 +36,9 @@ const maps = await api.getTopUserReviewsAll()
 
 // advanced: set a custom request handler
 // may be needed to use login operations in a browser, where a standard CORS proxy does not forward cookies
-api.setRequestHandler({
-    async get(endpoint: string) {
-        return {
-            headers: { /* ... */ },
-            body: "...",
-        }
-    },
+// see the built-in AxiosRequestHandler for an implementation example
+api.setRequestHandler(handler)
 
-    async post(endpoint: string, params: Record<string, string>) {
-        return {
-            headers: { /* ... */ },
-            body: "...",
-        }
-    },
-})
+// login
+const cookies = await api.login("username", "password")
 ```

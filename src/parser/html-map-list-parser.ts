@@ -4,12 +4,8 @@ import { RequestHandler } from "../RequestHandler"
 import { MapListResponse } from "../response/MapListResponse"
 import { parseMapElements } from "./html-map-parser"
 
-export async function parseMapList(
-	handler: RequestHandler,
-	endpoint: string
-): Promise<MapListResponse> {
-	const response = await handler.get(endpoint)
-	const root = parse(response.body)
+export async function parseMapList(html: string): Promise<MapListResponse> {
+	const root = parse(html)
 
 	const result: MapListResponse = {
 		maps: [],

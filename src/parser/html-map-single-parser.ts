@@ -5,11 +5,10 @@ import { RequestHandler } from "../RequestHandler"
 import { parseMapElements } from "./html-map-parser"
 
 export async function parseMapSingle(
-	handler: RequestHandler,
-	endpoint: string
+	html: string,
+	idOrKey: any
 ): Promise<Map | null> {
-	const response = await handler.get(endpoint)
-	const root = parse(response.body)
+	const root = parse(html)
 
 	const title = root
 		.querySelector("meta[property=og:title]")
@@ -23,7 +22,7 @@ export async function parseMapSingle(
 	const description = root
 		.querySelector("meta[property=og:description]")
 		?.getAttribute("content")
-	if (!title || !url || !imageUrl) throw new MapNotFoundError(endpoint)
+	if (!title || !url || !imageUrl) throw new MapNotFoundError(idOrKey)
 
 	const header = root.querySelector("header.entry-header")
 	const meta = header?.querySelector("div.bsaber-user")

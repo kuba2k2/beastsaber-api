@@ -1,3 +1,5 @@
+import { BaseListParams } from "./params"
+
 const queryMap = new Map<string, string | null>([
 	["sortOrder", null],
 	["page", null],
@@ -12,7 +14,7 @@ const queryMap = new Map<string, string | null>([
 	["followedBy", "followed_by"],
 ])
 
-export function buildQuery(params: object): string {
+export function buildQuery<T extends BaseListParams>(params: T): string {
 	const query = [] as string[]
 	Object.entries(params).forEach((entry) => {
 		const key = entry[0]
