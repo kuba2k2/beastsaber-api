@@ -11,21 +11,18 @@ import { MapListResponse } from "./response/MapListResponse"
 
 class BeastSaber {
 	handler: RequestHandler
+	domain: string
+	baseUrl: string
 	userAgent: string =
 		"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0"
 
 	/**
 	 * @param cookieStore a store for a CookieJar to use with the default request handler
 	 */
-	constructor(cookieStore?: Store) {
-		this.handler = new AxiosRequestHandler(cookieStore)
-	}
-
-	/**
-	 * Set base URL for all requests. The URL should not include a trailing slash.
-	 */
-	public setBaseUrl(baseUrl: string) {
-		BeastSaberEndpoints.BaseUrl = baseUrl
+	constructor(domain?: string, cookieStore?: Store) {
+		this.domain = domain ?? "bsaber.com"
+		this.handler = new AxiosRequestHandler(this.domain, cookieStore)
+		this.baseUrl = "https://" + this.domain
 	}
 
 	/**
@@ -67,8 +64,10 @@ class BeastSaber {
 		const cookie = new Cookie({
 			key: "wordpress_test_cookie",
 			value: "WP+Cookie+check",
+			domain: this.domain,
+			path: "/",
 		})
-		this.handler.cookieJar.setCookie(cookie, BeastSaberEndpoints.BaseUrl)
+		this.handler.cookieJar.setCookie(cookie, this.baseUrl)
 
 		const response = await this.handler.post({
 			endpoint,
@@ -78,18 +77,14 @@ class BeastSaber {
 		if (response.status !== 302) {
 			throw new LoginFailedError(response.body)
 		}
-		return await this.handler.cookieJar.getCookies(
-			BeastSaberEndpoints.BaseUrl
-		)
+		return await this.handler.cookieJar.getCookies(this.baseUrl)
 	}
 
 	/**
 	 * Check if the user is logged in (based on cookies expiration).
 	 */
 	public async isLoggedIn(endpoint?: string): Promise<boolean> {
-		const url = endpoint
-			? BeastSaberEndpoints.BaseUrl + endpoint
-			: BeastSaberEndpoints.BaseUrl
+		const url = endpoint ? this.baseUrl + endpoint : this.baseUrl
 		const cookies = await this.handler.cookieJar.getCookies(url)
 		return cookies.some(
 			(cookie) =>

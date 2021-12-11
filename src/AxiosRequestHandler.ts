@@ -10,10 +10,12 @@ import {
 } from "./RequestHandler"
 
 export class AxiosRequestHandler implements RequestHandler {
+	domain: string
 	cookieJar: CookieJar
 	axios: AxiosInstance
 
-	constructor(cookieStore?: Store) {
+	constructor(domain: string, cookieStore?: Store) {
+		this.domain = domain
 		this.cookieJar = new CookieJar(cookieStore)
 		this.axios = wrapper(
 			axios.create({
@@ -26,12 +28,13 @@ export class AxiosRequestHandler implements RequestHandler {
 		endpoint,
 		headers,
 	}: BsaberGetRequest): Promise<BsaberResponse> {
-		const url = BeastSaberEndpoints.BaseUrl + endpoint
+		const url = `https://${this.domain}${endpoint}`
 		const config: AxiosRequestConfig = {
 			headers: headers,
 		}
 		const response = await this.axios.get(url, config)
 		return {
+			url: url,
 			headers: response.headers,
 			body: response.data,
 			status: response.status,
@@ -43,7 +46,7 @@ export class AxiosRequestHandler implements RequestHandler {
 		headers,
 		params,
 	}: BsaberPostRequest): Promise<BsaberResponse> {
-		const url = BeastSaberEndpoints.BaseUrl + endpoint
+		const url = `https://${this.domain}${endpoint}`
 		const data = new URLSearchParams(params)
 		const config: AxiosRequestConfig = {
 			headers: headers,
@@ -52,6 +55,7 @@ export class AxiosRequestHandler implements RequestHandler {
 		}
 		const response = await this.axios.post(url, data, config)
 		return {
+			url: url,
 			headers: response.headers,
 			body: response.data,
 			status: response.status,

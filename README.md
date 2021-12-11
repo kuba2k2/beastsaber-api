@@ -17,9 +17,6 @@ const BeastSaber = require('beastsaber-api')
 
 const api = new BeastSaber()
 
-// optionally, prepend a CORS proxy URL, such as cors-anywhere (note no trailing slash)
-// api.setBaseUrl("https://cors-anywhere.example.com/https://bsaber.com")
-
 const map = await api.getMapByKey("1d62f")
 const map = await api.getMapById(1694841)
 

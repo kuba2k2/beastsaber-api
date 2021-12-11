@@ -2,8 +2,6 @@ import { BaseListParams } from "./params"
 import { buildQuery } from "./query"
 
 export const BeastSaberEndpoints = {
-	BaseUrl: "https://bsaber.com",
-
 	Login: () => `/wp-login.php`,
 	AdminAjax: () => `/wp-admin/admin-ajax.php`,
 

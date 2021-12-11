@@ -21,6 +21,11 @@ export type BsaberPostRequest = {
 
 export type BsaberResponse = {
 	/**
+	 * Full request URL.
+	 */
+	url: string
+
+	/**
 	 * Response headers.
 	 */
 	headers: Record<string, string> & {
